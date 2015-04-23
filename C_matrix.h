@@ -106,6 +106,9 @@ public:
     C_matrix<dataType> operator<= (C_matrix const& c);
     C_matrix<dataType> operator<= (dataType const& x);
 
+    //offset
+    int offsetL, offsetC;
+
     //cast operator (later)
     //operator int();
 
@@ -125,6 +128,7 @@ public:
     C_matrix<dataType> dotProduct(C_matrix& B); //must be multithreaded
     C_matrix<dataType> dotDiv(C_matrix& B); //must be multithreaded
     C_matrix<dataType> subset(int lbegin, int lend, int cbegin, int cend);
+    void subset(C_matrix<dataType> M, int lbegin, int lend, int cbegin, int cend);
 
     //distance map
     C_matrix<double> bwdistEuclidean(void); //Algorithme de Danielson
@@ -149,6 +153,7 @@ public:
 
     //matrix inversion
     C_matrix<dataType> inv(void);
+    C_matrix<dataType> pseudoInv(void);
 
     //fft (later)
 
@@ -257,6 +262,9 @@ template<class dataType> C_matrix<dataType>::C_matrix(const C_matrix &X)
     }
     endL = m_L-1;
     endC = m_C-1;
+
+    offsetL = X.offsetL;
+    offsetC = X.offsetC;
 
 }
 
@@ -860,6 +868,22 @@ template<class dataType> C_matrix<dataType> C_matrix<dataType>::subset(int lbegi
         }
     }
     return B;
+}
+
+template<class dataType> void C_matrix<dataType>::subset(C_matrix<dataType> M, int lbegin, int lend, int cbegin, int cend)
+{
+    if(lend<lbegin || cend<cbegin) throw "end must be larger than beginning";
+    if(lbegin<0 || cbegin<0) throw "begining must be larger than 0";
+    if(lend>this->endL || cend>this->endC) throw "end must be smaller size-1 k";
+    if(M.getNbRow()!=(lend-lbegin+1) || M.getNbColumn()!=(cend-cbegin+1)) throw "dimension matrix must agree";
+    for(int l=0 ; l<M.getNbRow() ; l++)
+    {
+        for(int c=0 ; c<M.getNbColumn() ; c++)
+        {
+            m_A[lbegin+l][cbegin+c] = M(l,c);
+        }
+    }
+    return;
 }
 
 template<class dataType> C_matrix<dataType> C_matrix<dataType>::m_abs(void)
@@ -1761,7 +1785,7 @@ template<class dataType> C_matrix<dataType> C_matrix<dataType>::inv(void)
     {
         throw "matrix must be square";
     }
-    std::cout << "use me carefully, I will return a matrix even though the matrix is not invertible" << std::endl;
+    //std::cout << "use me carefully, I will return a matrix even though the matrix is not invertible" << std::endl;
 
     //copy the current matrix push
     C_matrix<dataType> tmp(*this);
@@ -1826,7 +1850,11 @@ template<class dataType> C_matrix<dataType> C_matrix<dataType>::inv(void)
     return I;
 }
 
-
+template<class dataType> C_matrix<dataType> C_matrix<dataType>::pseudoInv(void)
+{
+    C_matrix<dataType> tmp = ((*this).Transpose())*(*this);
+    return (tmp.inv())*((*this).Transpose());
+}
 
 
 

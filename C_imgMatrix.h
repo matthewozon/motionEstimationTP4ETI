@@ -18,7 +18,105 @@ public:
     C_imgMatrix(const C_matrix<dataType> &M);
     virtual ~C_imgMatrix();
 
+
+    //overload operators (I guess I was wrong, those operator are not really inherited)
+    C_imgMatrix<dataType> operator= (C_imgMatrix const& c)
+    {
+        C_matrix<dataType>::operator =(c);
+        return (*this);
+    }
+    C_imgMatrix<dataType> operator= (dataType const& x)
+    {
+        C_matrix<dataType>::operator =(x);
+        return (*this);
+    }
+    C_imgMatrix<dataType> operator+ (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator +(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator+ (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator +(x);
+        return B;
+    }
+    C_imgMatrix<dataType> operator- (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator -(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator- (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator -(x);
+        return B;
+    }
+    C_imgMatrix<dataType> operator* (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator *(c);
+        return B;
+    }
+    //C_vector<dataType>& operator* (C_vector<dataType> const& c); //obselete
+    C_imgMatrix operator* (const dataType& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator *(x);
+        return B;
+    }
+
+    C_imgMatrix<dataType> operator== (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator ==(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator== (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator ==(x);
+        return B;
+    }
+
+    C_imgMatrix<dataType> operator> (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator >(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator> (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator >(x);
+        return B;
+    }
+    C_imgMatrix<dataType> operator>= (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator >=(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator>= (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator >=(x);
+        return B;
+    }
+
+    C_imgMatrix<dataType> operator< (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator <(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator< (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator <(x);
+        return B;
+    }
+    C_imgMatrix<dataType> operator<= (C_imgMatrix const& c)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator <=(c);
+        return B;
+    }
+    C_imgMatrix<dataType> operator<= (dataType const& x)
+    {
+        C_imgMatrix<dataType> B = C_matrix<dataType>::operator <=(x);
+        return B;
+    }
+
     void load(std::string fileNamePNG);
+    void savepng(std::string fileNamePNG);
 
     void display(unsigned short NORMALIZATION);
 
@@ -56,11 +154,15 @@ template<class dataType> C_imgMatrix<dataType>::C_imgMatrix(unsigned short L, un
 
 template<class dataType> C_imgMatrix<dataType>::C_imgMatrix(const C_imgMatrix &M):C_matrix<dataType>(M)
 {
+    //offsetL = M.offsetL;
+    //offsetC = M.offsetC;
     //m_fileNamePNG = M.m_fileNamePNG;
 }
 template<class dataType> C_imgMatrix<dataType>::C_imgMatrix(const C_matrix<dataType> &M):C_matrix<dataType>(M)
 {
     //
+    //offsetL = 0;
+    //offsetC = 0;
 }
 
 template<class dataType> C_imgMatrix<dataType>::~C_imgMatrix()
@@ -116,6 +218,23 @@ template<class dataType> void C_imgMatrix<dataType>::load(std::string fileNamePN
             this->m_A[l][c] = image(l,c);//,0,0
         }
     }
+}
+
+template<class dataType> void C_imgMatrix<dataType>::savepng(std::string fileNamePNG)
+{
+    //load image
+    cimg_library::CImg<float> image(this->m_L,this->m_C);
+
+    //store data in pointer m_A
+    for(unsigned short l=0 ; l<this->m_L ; l++)
+    {
+        //this->m_A[l] = &((imgData->data())[l*C]);
+        for(unsigned short c=0 ; c<this->m_C ; c++)
+        {
+            image(l,c) = this->m_A[l][c];//,0,0
+        }
+    }
+    image.save_png(fileNamePNG.data());
 }
 
 #endif // C_IMGMATRIX_H

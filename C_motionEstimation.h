@@ -7,10 +7,28 @@ class C_motionEstimation
 {
 public:
     //ctor: load two images (frames of a movie)
-    C_motionEstimation(std::string fileNameFrame1, std::string fileNameFrame2);
+    C_motionEstimation(std::string fileNameFrame1, std::string fileNameFrame2, double frameDelay);
+
+    /**********************************************************************************************/
+    /******************************YOU SHALL CODE**************************************************/
+    /**********************************************************************************************/
+    //motion estimation using the 8-neighboring systeme (assumption: motion field is locally constant)
+    bool computeMotionFieldV8(void);
 
     //method that computes all iterations of Horn & Schunck method: stores the result in vectX & vectY
-    bool computeMotionField(double alpha, unsigned long nbIteration){return false;}
+    bool computeMotionFieldHnS(double alpha, unsigned long nbIteration);
+
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+
+
+
+    /**********************************************************************************************/
+    /******************already implemented, you should get inspiration here************************/
+    /**********************************************************************************************/
+    //determine the motion field using the original image and its laplacian
+    bool computeMotionFieldLap(void);
 
     //the two frames
     C_imgMatrix<double> image1;
@@ -25,25 +43,12 @@ public:
 
 private:
     //first order derivatives of the images
-    C_imgMatrix<double> imDX;
-    C_imgMatrix<double> imDY;
-    C_imgMatrix<double> imDT;
+    C_imgMatrix<double> Ix;
+    C_imgMatrix<double> Iy;
+    C_imgMatrix<double> It;
 
-    //methods that compute the derivatives
-    void derivativeX(C_imgMatrix<double> im){return;}
-    void derivativeY(C_imgMatrix<double> im){return;}
-    void derivativeT(C_imgMatrix<double> imT, C_imgMatrix<double> imTDT){return;}
-
-    //compute one iteration of Horn & Schunck method: one for each component
-    double computeIterationX(double alpha){return 0.0;}
-    double computeIterationY(double alpha){return 0.0;}
-
-    //might be interesting to have those two...
-    double computeAverageX(unsigned short i, unsigned short j){return 0.0;}
-    double computeAverageY(unsigned short i, unsigned short j){return 0.0;}
-
-    //init vector field: choose the right method
-    bool initOpticalFlow(unsigned short METHOD){return false;}
+    //frame delay
+    double dt;
 
 };
 
